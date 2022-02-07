@@ -13,11 +13,12 @@ export type Folder = {
   title: string;
   createdAt: Date;
   updatedAt: Date;
+  tasks?: Task[];
 };
 
 export type Task = {
   id: number;
-  folder: Folder;
+  folder?: Folder;
   content: string;
   createdAt: Date;
   updatedAt: Date;
