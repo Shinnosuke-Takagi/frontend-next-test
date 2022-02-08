@@ -8,7 +8,7 @@ import { useAPIAuthenticate } from '@/hooks/api/useAPIAuthenticate';
 
 const AuthProvder: React.FC = ({ children }) => {
   const router = useRouter();
-  const { mutate: mutateAuthenticate, isLoading } = useAPIAuthenticate({
+  const { mutate: mutateAuthenticate } = useAPIAuthenticate({
     onSuccess: (userData) => {
       if (userData && userData.id) {
         if (router.pathname === '/login' || router.pathname === '/register') {

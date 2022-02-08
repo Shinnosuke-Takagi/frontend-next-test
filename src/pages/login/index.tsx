@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
+import { axiosInstance } from 'src/utils/url';
 import { loginSchema } from 'src/utils/validation/authSchema';
 
 const Login = () => {
@@ -33,7 +34,13 @@ const Login = () => {
           return asyncLocalStorage.getItem('userToken');
         })
         .then((token) => {
-          token && router.push('/');
+          if (token) {
+            axiosInstance.defaults.headers = {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            };
+            router.push('/');
+          }
         });
     },
     onError: (e) => {
