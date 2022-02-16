@@ -9,11 +9,13 @@ import {
 } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
+import { useAuthenticate } from 'src/contexts/auth/useAuthenticate';
 import { axiosInstance } from 'src/utils/url';
 import { loginSchema } from 'src/utils/validation/authSchema';
 
 const Login = () => {
   const router = useRouter();
+  const { authenticate } = useAuthenticate();
   const asyncLocalStorage = {
     setItem: async (key: string, value: string) => {
       return Promise.resolve().then(() => {
@@ -28,6 +30,7 @@ const Login = () => {
   };
   const { mutate: mutateLogin } = useAPILogin({
     onSuccess: (data) => {
+      authenticate();
       asyncLocalStorage
         .setItem('userToken', data.token || '')
         .then(() => {
