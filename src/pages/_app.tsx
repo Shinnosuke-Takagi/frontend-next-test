@@ -1,7 +1,7 @@
 import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Spinner } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAPIAuthenticate } from '@/hooks/api/useAPIAuthenticate';
@@ -12,8 +12,8 @@ import {
 
 const AuthProvder: React.FC = ({ children }) => {
   const router = useRouter();
-  const { authenticate } = useAuthenticate();
-  const { mutate: mutateAuthenticate } = useAPIAuthenticate({
+  const { isAuthenticated, authenticate } = useAuthenticate();
+  const { mutate: mutateAuthenticate, isLoading } = useAPIAuthenticate({
     onSuccess: (userData) => {
       if (userData && userData.id) {
         authenticate();
@@ -32,6 +32,10 @@ const AuthProvder: React.FC = ({ children }) => {
   useEffect(() => {
     mutateAuthenticate();
   }, [mutateAuthenticate]);
+
+  if (isLoading || (!isAuthenticated && router.pathname !== '/login')) {
+    return <Spinner />;
+  }
 
   return children as React.ReactElement;
 };

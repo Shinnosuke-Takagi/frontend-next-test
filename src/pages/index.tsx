@@ -1,14 +1,11 @@
 import { Button } from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
 import Link from 'next/link';
-import Router, { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { useAuthenticate } from 'src/contexts/auth/useAuthenticate';
 import { axiosInstance } from 'src/utils/url';
 import { jsonHeader } from 'src/utils/url/header';
-import styles from '../styles/Home.module.scss';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -17,10 +14,10 @@ const Home: NextPage = () => {
     const removeLocalStorage = async () => {
       await Promise.resolve();
       localStorage.removeItem('userToken');
+      axiosInstance.defaults.headers = jsonHeader;
     };
     removeLocalStorage();
     deauthenticate();
-    axiosInstance.defaults.headers = jsonHeader;
     router.push('/login');
   };
 
