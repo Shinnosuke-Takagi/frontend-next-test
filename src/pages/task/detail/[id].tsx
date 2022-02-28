@@ -1,4 +1,6 @@
+import TaskFormModal from '@/components/task/TaskFormModal';
 import { useAPIGetTaskDetail } from '@/hooks/task/useAPIGetTaskDetail';
+import { useAPIUpdateTask } from '@/hooks/task/useAPIUpdateTask';
 import { Spinner, Box, Badge, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -8,7 +10,19 @@ const TaskDetail = () => {
   const [task, setTask] = useState<Task>();
   const router = useRouter();
   const { id } = router.query as { id: string };
-  const { data: fetchedTask, isLoading } = useAPIGetTaskDetail(Number(id));
+  const {
+    data: fetchedTask,
+    isLoading,
+    refetch: refetchTask,
+  } = useAPIGetTaskDetail(Number(id));
+  const { mutate: updateTask } = useAPIUpdateTask({
+    onSuccess: () => {
+      refetchTask();
+    },
+    onError: (e) => {
+      alert('failed update task');
+    },
+  });
   useEffect(() => {
     setTask(fetchedTask);
   }, [fetchedTask]);
@@ -55,6 +69,11 @@ const TaskDetail = () => {
               </Box>
             </Box>
           </Box>
+          <TaskFormModal
+            saveTask={updateTask}
+            folder={task.folder}
+            task={task}
+          />
         </>
       ) : (
         <Text>タスクの詳細が取得できませんでした。</Text>

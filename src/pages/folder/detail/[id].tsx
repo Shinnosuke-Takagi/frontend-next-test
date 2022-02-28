@@ -1,4 +1,8 @@
+import FolderFormModal from '@/components/folder/FolderFormModal';
+import TaskFormModal from '@/components/task/TaskFormModal';
 import { useAPIGetFolderDetail } from '@/hooks/folder/useAPIGetFolderDetail';
+import { useAPIUpdateFolder } from '@/hooks/folder/useAPIUpdateFolder';
+import { useAPICreateTask } from '@/hooks/task/useAPICreateTask';
 import {
   Badge,
   Box,
@@ -16,7 +20,27 @@ const FolderDetail = () => {
   const [folder, setFolder] = useState<Folder>();
   const router = useRouter();
   const { id } = router.query as { id: string };
-  const { data: fetchedFolder, isLoading } = useAPIGetFolderDetail(Number(id));
+  const {
+    data: fetchedFolder,
+    isLoading,
+    refetch: refetchFolder,
+  } = useAPIGetFolderDetail(Number(id));
+  const { mutate: updateFolder } = useAPIUpdateFolder({
+    onSuccess: () => {
+      refetchFolder();
+    },
+    onError: (e) => {
+      alert('failed update folder');
+    },
+  });
+  const { mutate: createTask } = useAPICreateTask({
+    onSuccess: () => {
+      refetchFolder();
+    },
+    onError: (e) => {
+      alert('failed create task');
+    },
+  });
   useEffect(() => {
     setFolder(fetchedFolder);
   }, [fetchedFolder]);
@@ -63,6 +87,8 @@ const FolderDetail = () => {
               </Box>
             </Box>
           </Box>
+          <TaskFormModal saveTask={createTask} folder={folder} />
+          <FolderFormModal saveFolder={updateFolder} folder={folder} />
           <UnorderedList>
             {folder.tasks?.length &&
               folder.tasks.map((t) => (
